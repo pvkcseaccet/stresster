@@ -1,0 +1,7 @@
+{
+    "test_data_file_path": "/Users/vijay-5428/POCs/stresster/data/test/test-data.json",
+    "iterations":1,
+    "test_type": "EXPONENTIAL",
+    "domain" : "https://url.com",
+    "urls_to_test":"/api/v1/anyApi"
+}

@@ -1,0 +1,27 @@
+[
+    {
+        "requestID": "",
+        "data":
+        {
+            "/api/v1/anyapi":
+            [
+                {
+                    "uri": "/api/v1/anyapi",
+                    "http_method": "post",
+                    "params":
+                    {
+                        "user_email": "abc@xyz.com",
+                        "segement_id": "12264005"
+                    },
+                    "request_headers":
+                    {
+                        "Accept": "application/json"
+                    },
+                    "request_body": "api_data"
+                }
+            ]
+        },
+        "errors":[],
+        "warning": ""
+    }
+]
