@@ -32,25 +32,21 @@ public class HtmlReportGenerator
 		context.setVariable("testMode", reportsContext.getTestMode());
 
 		context.setVariable("totalIterations", reportsContext.getReports().size());
-		context.setVariable("totalApiCalls", reportsContext.getReports().values().stream().mapToLong(Long::longValue).sum());
+		context.setVariable("totalApiCalls", (long) reportsContext.getTestedAPIs().size()  * ((int) Math.pow(2, reportsContext.getReports().size() + 1) - 2));
 		context.setVariable("totalExecutionTime", reportsContext.getReports().values().stream().mapToLong(Long::longValue).sum() + "s");
 
 		List<Iteration> iterations = new ArrayList<>();
 		for(var entry : reportsContext.getReports().entrySet())
 		{
-			iterations.add(new Iteration(entry.getKey(), entry.getValue(), reportsContext.getReports().get(entry.getKey()) + "s"));
+			List<ApiResponseDetail> apiResponseDetails = new ArrayList<>();
+			for(var apiEntry : reportsContext.getApiResponses().get(entry.getKey()).entrySet())
+			{
+				apiResponseDetails.add(new ApiResponseDetail(apiEntry.getKey(), apiEntry.getValue()));
+			}
+
+			iterations.add(new Iteration(entry.getKey(), (long) reportsContext.getTestedAPIs().size() * (int) Math.pow(2, entry.getKey()), reportsContext.getReports().get(entry.getKey()) + "s", apiResponseDetails));
 		}
 		context.setVariable("iterations", iterations);
-
-		List<ApiResponseDetail> responseDetails = new ArrayList<>();
-		for(var iterationEntry : reportsContext.getApiResponses().entrySet())
-		{
-			for(var apiEntry : iterationEntry.getValue().entrySet())
-			{
-				responseDetails.add(new ApiResponseDetail(apiEntry.getKey(), apiEntry.getValue()));
-			}
-		}
-		context.setVariable("apiResponses", responseDetails);
 
 		String output = templateEngine.process("report", context);
 

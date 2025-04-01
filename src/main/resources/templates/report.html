@@ -109,25 +109,25 @@
     <div th:each="iteration : ${iterations}">
         <h3>Iteration <span th:text="${iteration.iterationNumber}"></span></h3>
         <p><strong>API Calls Executed:</strong> <span th:text="${iteration.apiCalls}"></span></p>
-        <p><strong>Execution Time:</strong> <span th:text="${iteration.executionTime}"></span></p>
-    </div>
-
-    <h2>API Response Details</h2>
-    <div th:each="apiResponse : ${apiResponses}">
-        <button class="collapsible" th:text="'API: ' + ${apiResponse.apiUri}"></button>
-        <div class="content">
-            <table>
-                <tr>
-                    <th>Response Code</th>
-                    <th>Response Body</th>
-                </tr>
-                <tr th:each="response : ${apiResponse.responses}">
-                    <td th:text="${response.statusCode}"></td>
-                    <td th:text="${response.responseBody}"></td>
-                </tr>
-            </table>
+        <p><strong>Max Execution Time:</strong> <span th:text="${iteration.executionTime}"></span></p>
+        <h2>API Response Details</h2>
+        <div th:each="apiResponse : ${iteration.apiResponseDetail}">
+            <button class="collapsible" th:text="'API: ' + ${apiResponse.apiUri}"></button>
+            <div class="content">
+                <table>
+                    <tr>
+                        <th>Response Code</th>
+                        <th>Response Body</th>
+                    </tr>
+                    <tr th:each="response : ${apiResponse.responses}">
+                        <td th:text="${response.statusCode}"></td>
+                        <td th:text="${response.responseBody}"></td>
+                    </tr>
+                </table>
+            </div>
         </div>
     </div>
+
 </div>
 
 <script>

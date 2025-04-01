@@ -135,7 +135,7 @@ public class ConcurrentRequestHandler
 
 			return Response.newBuilder()
 				.statusCode(statusCode)
-				.responseBody(responseBody)
+				.responseBody((statusCode > 199 && statusCode < 300) ? StringUtils.EMPTY : responseBody)
 				.requestURI(request.getUri())
 				.build();
 

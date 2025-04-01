@@ -79,7 +79,6 @@ public class StressTester
 			reportingDataAccumulator.doAccumulateReport(i, results);
 		}
 
-		reportingDataAccumulator.printReport();
 		String fileNamePrefix = reportingDataAccumulator.getReportsFolder() + "Report-" + System.currentTimeMillis();
 		ReportsContext context = ReportsContext.builder()
 			.reports(reportingDataAccumulator.getReports())
