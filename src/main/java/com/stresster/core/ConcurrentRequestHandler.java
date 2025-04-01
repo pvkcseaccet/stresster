@@ -40,7 +40,7 @@ public class ConcurrentRequestHandler
 		{
 			List<Response> responseList = doWork0(concurrentRequest, executorService, iterations);
 			return TestResults.newBuilder()
-				.executionTime(System.currentTimeMillis() - timeInMillis)
+				.executionTime((System.currentTimeMillis() - timeInMillis)/1000)
 				.responseList(responseList)
 				.build();
 		}

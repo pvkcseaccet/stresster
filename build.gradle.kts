@@ -21,6 +21,7 @@ dependencies {
     compileOnly("org.projectlombok:lombok:1.18.36")
     implementation("com.google.code.gson:gson:2.12.1")
     implementation("org.json:json:20250107")
+    implementation("org.thymeleaf:thymeleaf:3.1.1.RELEASE")
     annotationProcessor("org.projectlombok:lombok:1.18.36")
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))

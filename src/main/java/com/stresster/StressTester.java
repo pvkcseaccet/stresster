@@ -1,6 +1,9 @@
 package com.stresster;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
@@ -10,13 +13,13 @@ import java.util.stream.Collectors;
 
 import com.stresster.core.ConcurrentRequestHandler;
 import com.stresster.core.Util;
-import com.stresster.domain.TestType;
 import com.stresster.exception.StressterExceptionStore;
 import com.stresster.parser.DataFetcher;
-import com.stresster.reports.ReportGenerator;
+import com.stresster.reports.ReportingDataAccumulator;
 import com.stresster.resources.ConcurrentRequest;
 import com.stresster.resources.TestProps;
 import com.stresster.resources.TestResults;
+import com.stresster.resources.reports.ReportsContext;
 
 public class StressTester
 {
@@ -40,7 +43,7 @@ public class StressTester
 
 		TestProps props = DataFetcher.getProps(propsFilePath);
 
-		ReportGenerator reportGenerator = new ReportGenerator();
+		ReportingDataAccumulator reportingDataAccumulator = new ReportingDataAccumulator();
 		for(int i = 1; i <= props.getIterations(); i++)
 		{
 			int noOfAPICalls = (int) Math.pow(2, i);
@@ -73,11 +76,20 @@ public class StressTester
 			}
 			executorService.shutdown();
 			Util.softKillExecutor(executorService);
-			reportGenerator.doAccumulateReport(i, results);
+			reportingDataAccumulator.doAccumulateReport(i, results);
 		}
 
-		reportGenerator.printReport();
-		reportGenerator.publishReport(props.getDomain(), String.join(",", props.getURLsToTest()), TestType.EXPONENTIAL, needAPIResponse);
+		reportingDataAccumulator.printReport();
+		String fileNamePrefix = reportingDataAccumulator.getReportsFolder() + "Report-" + System.currentTimeMillis();
+		ReportsContext context = ReportsContext.builder()
+			.reports(reportingDataAccumulator.getReports())
+			.apiResponses(needAPIResponse? reportingDataAccumulator.getApiResponses() : new HashMap<>())
+			.testedDomain(props.getDomain())
+			.testedAPIs(new ArrayList<>(props.getURLsToTest()))
+			.testMode(props.getTestType().getType())
+			.htmlReportFile(new File(fileNamePrefix + ".html"))
+			.build();
+		reportingDataAccumulator.publishReport(context);
 	}
 
 }

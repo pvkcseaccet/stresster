@@ -7,7 +7,8 @@ public enum StressterExceptionStore
 {
 	REQUEST_LIST_EMPTY(new StressterException("No URL matches URLs given in test-props file."), true),
 	INVALID_ARGUMENT_RECEIVED_FROM_CLIENT(new StressterException("Invalid Test Arguments Passed."), true),
-	TEST_EXECUTION_FAILED(new StressterException("Test Execution Failed"), true);
+	TEST_EXECUTION_FAILED(new StressterException("Test Execution Failed."), true),
+	REPORT_GENERATION_FAILED(new StressterException("Report Generation Failed."), true);
 
 	StressterExceptionStore(StressterException ex, boolean needLog)
 	{

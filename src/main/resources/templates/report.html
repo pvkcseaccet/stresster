@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>API Test Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        .summary {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        }
+        .collapsible {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            padding: 10px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            font-size: 16px;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+        .active, .collapsible:hover {
+            background-color: #0056b3;
+        }
+        .content {
+            padding: 0 15px;
+            display: none;
+            overflow: hidden;
+            background-color: #f9f9f9;
+            border-left: 4px solid #007bff;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>API Performance Test Report</h1>
+
+    <div class="summary">
+        <h2>Test Configuration</h2>
+        <p><strong>Tested Domain:</strong> <span th:text="${testedDomain}"></span></p>
+        <p><strong>Tested APIs:</strong></p>
+        <ul>
+            <li th:each="api : ${testedApis}" th:text="${api}"></li>
+        </ul>
+        <p><strong>Method:</strong> <span th:text="${method}"></span></p>
+        <p><strong>Test Mode:</strong> <span th:text="${testMode}"></span></p>
+    </div>
+
+    <h2>Summary</h2>
+    <table>
+        <tr>
+            <th>Metric</th>
+            <th>Value</th>
+        </tr>
+        <tr>
+            <td>Total Iterations</td>
+            <td th:text="${totalIterations}"></td>
+        </tr>
+        <tr>
+            <td>Total API Calls</td>
+            <td th:text="${totalApiCalls}"></td>
+        </tr>
+        <tr>
+            <td>Total Execution Time</td>
+            <td th:text="${totalExecutionTime}"></td>
+        </tr>
+    </table>
+
+    <h2>Iteration Details</h2>
+    <div th:each="iteration : ${iterations}">
+        <h3>Iteration <span th:text="${iteration.iterationNumber}"></span></h3>
+        <p><strong>API Calls Executed:</strong> <span th:text="${iteration.apiCalls}"></span></p>
+        <p><strong>Execution Time:</strong> <span th:text="${iteration.executionTime}"></span></p>
+    </div>
+
+    <h2>API Response Details</h2>
+    <div th:each="apiResponse : ${apiResponses}">
+        <button class="collapsible" th:text="'API: ' + ${apiResponse.apiUri}"></button>
+        <div class="content">
+            <table>
+                <tr>
+                    <th>Response Code</th>
+                    <th>Response Body</th>
+                </tr>
+                <tr th:each="response : ${apiResponse.responses}">
+                    <td th:text="${response.statusCode}"></td>
+                    <td th:text="${response.responseBody}"></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var coll = document.getElementsByClassName("collapsible");
+        for (var i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function () {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                content.style.display = (content.style.display === "block") ? "none" : "block";
+            });
+        }
+    });
+</script>
+
+</body>
+</html>
