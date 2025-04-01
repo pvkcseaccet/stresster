@@ -11,13 +11,13 @@ import org.json.JSONObject;
 
 public class Util
 {
-	public static String getPropsFilePathFromCommandLine(String... args)
+	public static String getPropsFilePathFromCommandLine(String pattern, String... args)
 	{
 		for(String arg : args)
 		{
-			if(arg.startsWith("--test-props="))
+			if(arg.startsWith(pattern))
 			{
-				return arg.substring("--my-option=".length()+1);
+				return arg.substring(pattern.length());
 			}
 		}
 

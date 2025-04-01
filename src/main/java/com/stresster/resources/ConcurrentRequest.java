@@ -11,14 +11,13 @@ import com.stresster.domain.TestType;
 
 @Getter
 @Builder(builderClassName = "Builder")
-@Setter
 public class ConcurrentRequest
 {
 	private int testID;
 	private TestType testType;
 	private String reportFilePath;
 	private String testDomain;
-	private int noOfThreads;
+	@Setter private int noOfThreads;
 	private CyclicBarrier barrier;
 	private List<Request> httpRequestList;
 

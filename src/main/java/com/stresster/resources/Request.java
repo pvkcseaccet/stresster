@@ -3,17 +3,20 @@ package com.stresster.resources;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.Map;
+
 import org.json.JSONObject;
+
+import com.google.gson.annotations.SerializedName;
 
 @Data
 @Builder(builderClassName = "Builder")
 public class Request
 {
-	private String url;
 	private String uri;
-	private String method;
+	@SerializedName("http_method") private String method;
 	private String cookie;
-	private JSONObject headers;
-	private String requestBody;
-	private JSONObject queryParams;
+	@SerializedName("request_headers") private Map<String, Object> headers;
+	@SerializedName("request_data") private String requestBody;
+	@SerializedName("params") private Map<String, Object> queryParams;
 }

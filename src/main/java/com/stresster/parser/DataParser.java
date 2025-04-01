@@ -14,23 +14,26 @@ import com.stresster.resources.TestProps;
 
 public class DataParser
 {
-	private static final Function<JSONObject, Request> PARSE_REQUEST = (requestJSON) ->
-		Request.builder()
-			.url(requestJSON.getJSONObject("data").optString("url", ""))
-			.uri(requestJSON.getJSONObject("data").optString("uri", ""))
-			.cookie(requestJSON.getJSONObject("data").optString("cookies", ""))
-			.headers(requestJSON.getJSONObject("data").optJSONObject("request_headers", new JSONObject()))
-			.method(requestJSON.getJSONObject("data").optString("http_method", ""))
-			.queryParams(requestJSON.getJSONObject("data").optJSONObject("params", new JSONObject()))
-			.requestBody(new JSONObject(requestJSON.getJSONObject("data").optString("request_data", new JSONObject().toString())).toString())
-			.build();
+	private static final Function<String, Request> PARSE_REQUEST = (requestJSON) ->
+//		Request.builder()
+//			.url(requestJSON.getJSONObject("data").optString("url", ""))
+//			.uri(requestJSON.getJSONObject("data").optString("uri", ""))
+//			.cookie(requestJSON.getJSONObject("data").optString("cookies", ""))
+//			.headers(requestJSON.getJSONObject("data").optJSONObject("request_headers", new JSONObject()))
+//			.method(requestJSON.getJSONObject("data").optString("http_method", ""))
+//			.queryParams(requestJSON.getJSONObject("data").optJSONObject("params", new JSONObject()))
+//			.requestBody(new JSONObject(requestJSON.getJSONObject("data").optString("request_data", new JSONObject().toString())).toString())
+//			.build();
+	new Gson().fromJson(requestJSON, Request.class);
 
 	static List<Request> getParsedRequestList(String jsonContent)
 	{
-		JSONArray requestJSONArray = new JSONArray(jsonContent);
-		return requestJSONArray.toList()
+		JSONObject requestJSONArray = new JSONObject(jsonContent);
+		return requestJSONArray.optJSONArray("data")
+			.toList()
 			.stream()
 			.map(x -> new JSONObject((HashMap)x))
+			.map(String::valueOf)
 			.map(PARSE_REQUEST)
 			.collect(Collectors.toList());
 	}

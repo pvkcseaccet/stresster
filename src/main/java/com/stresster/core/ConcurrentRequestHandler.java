@@ -15,37 +15,43 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.FutureTask;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 
 import com.stresster.resources.ConcurrentRequest;
 import com.stresster.resources.Request;
+import com.stresster.resources.Response;
+import com.stresster.resources.TestResults;
 
 public class ConcurrentRequestHandler
 {
 
 	private static final Logger LOGGER = Logger.getLogger(ConcurrentRequestHandler.class.getName());
 
-	public static Long doWork(ConcurrentRequest concurrentRequest, ExecutorService executorService, int iterations)
+	public static TestResults doWork(ConcurrentRequest concurrentRequest, ExecutorService executorService, int iterations)
 	{
 		long timeInMillis = System.currentTimeMillis();
 		try
 		{
-			doWork0(concurrentRequest, executorService, iterations);
+			List<Response> responseList = doWork0(concurrentRequest, executorService, iterations);
+			return TestResults.newBuilder()
+				.executionTime(System.currentTimeMillis() - timeInMillis)
+				.responseList(responseList)
+				.build();
 		}
 		catch(Exception ex)
 		{
 			LOGGER.severe("" + ex);
 		}
-		return System.currentTimeMillis() - timeInMillis;
+		return TestResults.empty();
 	}
 
-	private static void doWork0(ConcurrentRequest concurrentRequest, ExecutorService executorService, int iterations)
+	private static List<Response> doWork0(ConcurrentRequest concurrentRequest, ExecutorService executorService, int iterations)
 	{
 
 		List<Request> requestList = concurrentRequest.getHttpRequestList();
@@ -53,12 +59,10 @@ public class ConcurrentRequestHandler
 		if(requestList == null)
 		{
 			LOGGER.severe("Nothing to test for now.");
-			return;
+			return null;
 		}
 
-		List<Integer> response;
-
-		List<FutureTask<Integer>> futureTasks = Collections.nCopies(iterations, requestList)
+		List<FutureTask<Response>> futureTasks = Collections.nCopies(iterations, requestList)
 			.stream()
 			.flatMap(Collection::stream)
 			.map((request) -> getTask.apply(concurrentRequest, request))
@@ -66,20 +70,20 @@ public class ConcurrentRequestHandler
 
 		futureTasks.forEach(executorService::execute);
 
-		response = futureTasks.stream().map(x -> {
+		return futureTasks.stream().map(x -> {
 			try
 			{
 				return x.get();
 			}
 			catch(Exception ex)
 			{
-				return -1;
+				return null;
 			}
 		}).collect(Collectors.toList());
 
 	}
 
-	private static BiFunction<ConcurrentRequest, Request, FutureTask<Integer>> getTask = (concurrentRequest, request) -> new FutureTask<>(() -> {
+	private static BiFunction<ConcurrentRequest, Request, FutureTask<Response>> getTask = (concurrentRequest, request) -> new FutureTask<Response>(() -> {
 		try
 		{
 
@@ -88,7 +92,7 @@ public class ConcurrentRequestHandler
 
 			connection.setRequestMethod(request.getMethod().toUpperCase());
 
-			JSONObject headers = request.getHeaders();
+			JSONObject headers = new JSONObject(request.getHeaders());
 			for(String key : headers.keySet())
 			{
 				if(!RESTRICTED_HEADERS.contains(key.toLowerCase()))
@@ -98,7 +102,7 @@ public class ConcurrentRequestHandler
 			}
 			connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36");
 
-			String queryParams = Util.HttpClient.paramsToQueryString(request.getQueryParams());
+			String queryParams = Util.HttpClient.paramsToQueryString(new JSONObject(request.getQueryParams()));
 			String bodyContent = Optional.ofNullable(request.getRequestBody())
 				.map(body -> queryParams + "&JSONString=" + URLEncoder.encode(body, StandardCharsets.UTF_8))
 				.orElse(queryParams);
@@ -117,7 +121,7 @@ public class ConcurrentRequestHandler
 			}
 
 			int statusCode = connection.getResponseCode();
-			String responseBody;
+			String responseBody = StringUtils.EMPTY;
 			try(BufferedReader br = new BufferedReader(
 				new InputStreamReader(
 					statusCode < 400 ? connection.getInputStream() :
@@ -129,8 +133,11 @@ public class ConcurrentRequestHandler
 
 			connection.disconnect();
 
-			String result = "Response for " + request.getUri() + ": " + responseBody;
-			return statusCode;
+			return Response.newBuilder()
+				.statusCode(statusCode)
+				.responseBody(responseBody)
+				.requestURI(request.getUri())
+				.build();
 
 		}
 		catch(Exception e)
@@ -138,7 +145,7 @@ public class ConcurrentRequestHandler
 			LOGGER.severe("Error processing request: " + e);
 		}
 
-		return -1;
+		return Response.empty();
 	});
 }
 

@@ -6,7 +6,8 @@ import java.util.logging.Logger;
 public enum StressterExceptionStore
 {
 	REQUEST_LIST_EMPTY(new StressterException("No URL matches URLs given in test-props file."), true),
-	INVALID_ARGUMENT_RECEIVED_FROM_CLIENT(new StressterException(""), true);
+	INVALID_ARGUMENT_RECEIVED_FROM_CLIENT(new StressterException("Invalid Test Arguments Passed."), true),
+	TEST_EXECUTION_FAILED(new StressterException("Test Execution Failed"), true);
 
 	StressterExceptionStore(StressterException ex, boolean needLog)
 	{
