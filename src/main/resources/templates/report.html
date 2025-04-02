@@ -12,20 +12,38 @@
             background-color: #424242;
         }
 
-        /* Fixed Header */
         .header {
             position: fixed;
             top: 0;
             width: 100%;
             background-color: #000004;
             color: #81e7f0;
-            text-align: left;
             padding: 15px;
             font-size: 20px;
             font-weight: bold;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
             z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
         }
+
+        .header .left {
+            position: absolute;
+            left: 20px;
+            font-size: 20px;
+        }
+
+        .header .center {
+            margin: 0 auto;
+            font-size: 15px;
+            color: #07cadb;
+            text-align: center;
+            width: 100%;
+            max-width: 600px; /* Prevents it from stretching too wide */
+        }
+
         p {
             color: #ffffff;
         }
@@ -44,14 +62,17 @@
         }
         h3 {
             text-align: center;
-            color: #027878;
+            color: #07cadb;
         }
 
         h4, h5 {
-            color: #027878;
+            color: #07cadb;
         }
 
-        /* Summary Box */
+        .testconf th {
+            background-color: #424242;
+        }
+
         .summary {
             background: #fff;
             padding: 15px;
@@ -79,16 +100,15 @@
             text-align: left;
         }
         th {
-            background: #007bff;
+            background: #424242;
             color: white;
         }
         tr:nth-child(even) {
             background: #f9f9f9;
         }
 
-        /* Collapsible Sections */
         .collapsible {
-            background: #007bff;
+            background: #017580;
             color: white;
             cursor: pointer;
             padding: 12px;
@@ -124,22 +144,43 @@
             margin-bottom: 10px;
             transition: max-height 0.3s ease-out;
         }
+        .iteration p {
+            font-size: 12px;
+        }
+
     </style>
 </head>
 <body>
-<div class="header">StressTer</div>
+<div class="header">
+    <span class="left">StressTer</span>
+    <span class="center">Performance Test Report</span>
+</div>
 
 <div class="container">
-    <h3>API Performance Report</h3>
-
-    <div class="summary">
+    <div class="testconf">
         <h5>Test Configuration</h5>
-        <p>Tested Domain: <span th:text="${testedDomain}"></span></p>
-        <p>Tested APIs:</p>
-        <ul>
-            <li th:each="api : ${testedApis}" th:text="${api}"></li>
-        </ul>
-        <p>Test Mode: <span th:text="${testMode}"></span></p>
+        <table>
+            <tr>
+                <th>Configuration</th>
+                <th>Value</th>
+            </tr>
+            <tr>
+                <td>Domain</td>
+                <td th:text="${testedDomain}"></td>
+            </tr>
+            <tr>
+                <td>APIs</td>
+                <td>
+                    <ul>
+                        <li th:each="api : ${testedApis}" th:text="${api}"></li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td>Mode</td>
+                <td th:text="${testMode}"></td>
+            </tr>
+        </table>
     </div>
 
     <h4>Summary</h4>

@@ -3,8 +3,10 @@ package com.stresster.reports;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
@@ -41,7 +43,17 @@ public class HtmlReportGenerator
 			List<ApiResponseDetail> apiResponseDetails = new ArrayList<>();
 			for(var apiEntry : reportsContext.getApiResponses().get(entry.getKey()).entrySet())
 			{
-				apiResponseDetails.add(new ApiResponseDetail(apiEntry.getKey(), apiEntry.getValue()));
+				apiResponseDetails.add(new ApiResponseDetail(apiEntry.getKey(), apiEntry.getValue()
+					.stream()
+					.map(x -> {
+						if (StringUtils.isEmpty(x.getResponseBody()))
+						{
+							x.setResponseBody("StressTer:: Response Not Saved.");
+							return x;
+						}
+						return x;
+					})
+					.collect(Collectors.toList())));
 			}
 
 			iterations.add(new Iteration(entry.getKey(), (long) reportsContext.getTestedAPIs().size() * (int) Math.pow(2, entry.getKey()), reportsContext.getReports().get(entry.getKey()) + "s", apiResponseDetails));
