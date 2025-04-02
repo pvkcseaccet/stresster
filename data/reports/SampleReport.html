@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>StressTer Test Report</title>
+    <style>
+        /* General Page Styling */
+        body {
+            font-family: 'Verdana', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #424242;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: #000004;
+            color: #81e7f0;
+            padding: 15px;
+            font-size: 20px;
+            font-weight: bold;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+        }
+
+        .header .left {
+            position: absolute;
+            left: 20px;
+            font-size: 20px;
+        }
+
+        .header .center {
+            margin: 0 auto;
+            font-size: 15px;
+            color: #07cadb;
+            text-align: center;
+            width: 100%;
+            max-width: 600px; /* Prevents it from stretching too wide */
+        }
+
+        p {
+            color: #ffffff;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 80px auto 20px auto; /* Adjusted margin to avoid header overlap */
+            background: #424242;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            color: #027878;
+        }
+        h3 {
+            text-align: center;
+            color: #07cadb;
+        }
+
+        h4, h5 {
+            color: #07cadb;
+        }
+
+        .testconf th {
+            background-color: #424242;
+        }
+
+        .summary {
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .summary p {
+            color: #000000;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: white;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background: #424242;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .collapsible {
+            background: #017580;
+            color: white;
+            cursor: pointer;
+            padding: 12px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            font-size: 16px;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+            margin-top: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .collapsible:hover, .active {
+            background: #0056b3;
+        }
+        .collapsible::after {
+            content: '\25B6'; /* Right arrow */
+            font-size: 14px;
+            transition: transform 0.3s ease;
+        }
+        .active::after {
+            transform: rotate(90deg);
+        }
+        .content {
+            padding: 10px;
+            display: none;
+            overflow: hidden;
+            background: #f9f9f9;
+            border-left: 4px solid #007bff;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            transition: max-height 0.3s ease-out;
+        }
+        .iteration p {
+            font-size: 12px;
+        }
+
+    </style>
+</head>
+<body>
+<div class="header">
+    <span class="left">StressTer</span>
+    <span class="center">Performance Test Report</span>
+</div>
+
+<div class="container">
+    <div class="testconf">
+        <h5>Test Configuration</h5>
+        <table>
+            <tr>
+                <th>Configuration</th>
+                <th>Value</th>
+            </tr>
+            <tr>
+                <td>Domain</td>
+                <td>https://url.com</td>
+            </tr>
+            <tr>
+                <td>APIs</td>
+                <td>
+                    <ul>
+                        <li>/api/v3/anySubApi/(\d+)</li>
+                        <li>/api/v3/anyApi</li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td>Mode</td>
+                <td>Concurrent + Exponential</td>
+            </tr>
+        </table>
+    </div>
+
+    <h4>Summary</h4>
+    <table>
+        <tr>
+            <th>Metric</th>
+            <th>Value</th>
+        </tr>
+        <tr>
+            <td>Total Iterations</td>
+            <td>3</td>
+        </tr>
+        <tr>
+            <td>Total API Calls</td>
+            <td>28</td>
+        </tr>
+        <tr>
+            <td>Total Execution Time</td>
+            <td>90s</td>
+        </tr>
+    </table>
+
+    <h4>Iteration Details</h4>
+    <div class="iteration">
+        <h3>Iteration <span>1</span></h3>
+        <p>API Calls Executed: <span>4</span></p>
+        <p>Max Execution Time of a Single Call: <span>22s</span></p>
+
+        <h5>API Response Details</h5>
+        <div>
+            <button class="collapsible">
+                <span>API: /api/v3/anyApi</span>
+            </button>
+            <div class="content">
+                <table>
+                    <tr>
+                        <th>Response Code</th>
+                        <th>Response Body</th>
+                    </tr>
+                    <tr>
+                        <td>201</td>
+                        <td>Response Not Saved.</td>
+                    </tr>
+                    <tr>
+                        <td>201</td>
+                        <td>Response Not Saved.</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div>
+            <button class="collapsible">
+                <span>API: /api/v3/anySubApi/95108000000105057</span>
+            </button>
+            <div class="content">
+                <table>
+                    <tr>
+                        <th>Response Code</th>
+                        <th>Response Body</th>
+                    </tr>
+                    <tr>
+                        <td>200</td>
+                        <td>Response Not Saved.</td>
+                    </tr>
+                    <tr>
+                        <td>200</td>
+                        <td>Response Not Saved.</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="iteration">
+        <h3>Iteration <span>2</span></h3>
+        <p>API Calls Executed: <span>8</span></p>
+        <p>Max Execution Time of a Single Call: <span>27s</span></p>
+
+        <h5>API Response Details</h5>
+        <div>
+            <button class="collapsible">
+                <span>API: /api/v3/anyApi</span>
+            </button>
+            <div class="content">
+                <table>
+                    <tr>
+                        <th>Response Code</th>
+                        <th>Response Body</th>
+                    </tr>
+                    <tr>
+                        <td>201</td>
+                        <td>Response Not Saved.</td>
+                    </tr>
+                    <tr>
+                        <td>201</td>
+                        <td>Response Not Saved.</td>
+                    </tr>
+                    <tr>
+                        <td>201</td>
+                        <td>Response Not Saved.</td>
+                    </tr>
+                    <tr>
+                        <td>201</td>
+                        <td>Response Not Saved.</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div>
+            <button class="collapsible">
+                <span>API: /api/v3/anySubApi/95108000000105057</span>
+            </button>
+            <div class="content">
+                <table>
+                    <tr>
+                        <th>Response Code</th>
+                        <th>Response Body</th>
+                    </tr>
+                    <tr>
+                        <td>200</td>
+                        <td>Response Not Saved.</td>
+                    </tr>
+                    <tr>
+                        <td>200</td>
+                        <td>Response Not Saved.</td>
+                    </tr>
+                    <tr>
+                        <td>200</td>
+                        <td>Response Not Saved.</td>
+                    </tr>
+                    <tr>
+                        <td>200</td>
+                        <td>Response Not Saved.</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="iteration">
+        <h3>Iteration <span>3</span></h3>
+        <p>API Calls Executed: <span>16</span></p>
+        <p>Max Execution Time of a Single Call: <span>41s</span></p>
+
+        <h5>API Response Details</h5>
+        <div>
+            <button class="collapsible">
+                <span>API: /api/v3/anyApi</span>
+            </button>
+            <div class="content">
+                <table>
+                    <tr>
+                        <th>Response Code</th>
+                        <th>Response Body</th>
+                    </tr>
+                    <tr>
+                        <td>201</td>
+                        <td>Response Not Saved.</td>
+                    </tr>
+                    <tr>
+                        <td>201</td>
+                        <td>Response Not Saved.</td>
+                    </tr>
+                    <tr>
+                        <td>201</td>
+                        <td>Response Not Saved.</td>
+                    </tr>
+                    <tr>
+                        <td>201</td>
+                        <td>Response Not Saved.</td>
+                    </tr>
+                    <tr>
+                        <td>201</td>
+                        <td>Response Not Saved.</td>
+                    </tr>
+                    <tr>
+                        <td>201</td>
+                        <td>Response Not Saved.</td>
+                    </tr>
+                    <tr>
+                        <td>201</td>
+                        <td>Response Not Saved.</td>
+                    </tr>
+                    <tr>
+                        <td>201</td>
+                        <td>Response Not Saved.</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div>
+            <button class="collapsible">
+                <span>API: /api/v3/anySubApi/95108000000105057</span>
+            </button>
+            <div class="content">
+                <table>
+                    <tr>
+                        <th>Response Code</th>
+                        <th>Response Body</th>
+                    </tr>
+                    <tr>
+                        <td>200</td>
+                        <td>Response Not Saved.</td>
+                    </tr>
+                    <tr>
+                        <td>200</td>
+                        <td>Response Not Saved.</td>
+                    </tr>
+                    <tr>
+                        <td>200</td>
+                        <td>Response Not Saved.</td>
+                    </tr>
+                    <tr>
+                        <td>200</td>
+                        <td>Response Not Saved.</td>
+                    </tr>
+                    <tr>
+                        <td>200</td>
+                        <td>Response Not Saved.</td>
+                    </tr>
+                    <tr>
+                        <td>200</td>
+                        <td>Response Not Saved.</td>
+                    </tr>
+                    <tr>
+                        <td>200</td>
+                        <td>Response Not Saved.</td>
+                    </tr>
+                    <tr>
+                        <td>200</td>
+                        <td>Response Not Saved.</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var coll = document.getElementsByClassName("collapsible");
+        for (var i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function () {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                content.style.display = (content.style.display === "block") ? "none" : "block";
+            });
+        }
+    });
+</script>
+</body>
+</html>
