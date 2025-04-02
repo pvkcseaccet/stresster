@@ -2,90 +2,147 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>API Test Report</title>
+    <title>StressTer Test Report</title>
     <style>
+        /* General Page Styling */
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+            font-family: 'Verdana', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #424242;
+        }
+
+        /* Fixed Header */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: #000004;
+            color: #81e7f0;
+            text-align: left;
+            padding: 15px;
+            font-size: 20px;
+            font-weight: bold;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+        p {
+            color: #ffffff;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 80px auto 20px auto; /* Adjusted margin to avoid header overlap */
+            background: #424242;
             padding: 20px;
-            background-color: #f4f4f4;
+            border-radius: 10px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
         }
-        h1, h2, h3 {
-            color: #333;
+
+        h1, h2 {
+            color: #027878;
         }
+        h3 {
+            text-align: center;
+            color: #027878;
+        }
+
+        h4, h5 {
+            color: #027878;
+        }
+
+        /* Summary Box */
+        .summary {
+            background: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .summary p {
+            color: #000000;
+        }
+
+        /* Tables */
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
+            margin-top: 15px;
+            background: white;
         }
         table, th, td {
             border: 1px solid #ddd;
         }
         th, td {
-            padding: 10px;
+            padding: 12px;
             text-align: left;
         }
         th {
-            background-color: #007bff;
+            background: #007bff;
             color: white;
         }
-        .summary {
-            background-color: #fff;
-            padding: 15px;
-            border-radius: 5px;
-            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        tr:nth-child(even) {
+            background: #f9f9f9;
         }
-        .container {
-            max-width: 800px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-        }
+
+        /* Collapsible Sections */
         .collapsible {
-            background-color: #007bff;
+            background: #007bff;
             color: white;
             cursor: pointer;
-            padding: 10px;
+            padding: 12px;
             width: 100%;
             border: none;
             text-align: left;
             font-size: 16px;
             border-radius: 5px;
-            margin-top: 5px;
+            transition: background 0.3s ease;
+            margin-top: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .active, .collapsible:hover {
-            background-color: #0056b3;
+        .collapsible:hover, .active {
+            background: #0056b3;
+        }
+        .collapsible::after {
+            content: '\25B6'; /* Right arrow */
+            font-size: 14px;
+            transition: transform 0.3s ease;
+        }
+        .active::after {
+            transform: rotate(90deg);
         }
         .content {
-            padding: 0 15px;
+            padding: 10px;
             display: none;
             overflow: hidden;
-            background-color: #f9f9f9;
+            background: #f9f9f9;
             border-left: 4px solid #007bff;
             border-radius: 5px;
             margin-bottom: 10px;
+            transition: max-height 0.3s ease-out;
         }
     </style>
 </head>
 <body>
+<div class="header">StressTer</div>
 
 <div class="container">
-    <h1>API Performance Test Report</h1>
+    <h3>API Performance Report</h3>
 
     <div class="summary">
-        <h2>Test Configuration</h2>
-        <p><strong>Tested Domain:</strong> <span th:text="${testedDomain}"></span></p>
-        <p><strong>Tested APIs:</strong></p>
+        <h5>Test Configuration</h5>
+        <p>Tested Domain: <span th:text="${testedDomain}"></span></p>
+        <p>Tested APIs:</p>
         <ul>
             <li th:each="api : ${testedApis}" th:text="${api}"></li>
         </ul>
-        <p><strong>Method:</strong> <span th:text="${method}"></span></p>
-        <p><strong>Test Mode:</strong> <span th:text="${testMode}"></span></p>
+        <p>Test Mode: <span th:text="${testMode}"></span></p>
     </div>
 
-    <h2>Summary</h2>
+    <h4>Summary</h4>
     <table>
         <tr>
             <th>Metric</th>
@@ -105,14 +162,17 @@
         </tr>
     </table>
 
-    <h2>Iteration Details</h2>
-    <div th:each="iteration : ${iterations}">
+    <h4>Iteration Details</h4>
+    <div th:each="iteration : ${iterations}" class="iteration">
         <h3>Iteration <span th:text="${iteration.iterationNumber}"></span></h3>
-        <p><strong>API Calls Executed:</strong> <span th:text="${iteration.apiCalls}"></span></p>
-        <p><strong>Max Execution Time:</strong> <span th:text="${iteration.executionTime}"></span></p>
-        <h2>API Response Details</h2>
+        <p>API Calls Executed: <span th:text="${iteration.apiCalls}"></span></p>
+        <p>Max Execution Time of a Single Call: <span th:text="${iteration.executionTime}"></span></p>
+
+        <h5>API Response Details</h5>
         <div th:each="apiResponse : ${iteration.apiResponseDetail}">
-            <button class="collapsible" th:text="'API: ' + ${apiResponse.apiUri}"></button>
+            <button class="collapsible">
+                <span th:text="'API: ' + ${apiResponse.apiUri}"></span>
+            </button>
             <div class="content">
                 <table>
                     <tr>
@@ -127,7 +187,6 @@
             </div>
         </div>
     </div>
-
 </div>
 
 <script>
@@ -142,6 +201,5 @@
         }
     });
 </script>
-
 </body>
 </html>
