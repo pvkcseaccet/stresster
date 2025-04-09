@@ -10,6 +10,7 @@ public class Response
 	private int statusCode;
 	private String responseBody;
 	private String requestURI;
+	private long timeTakeninMillis;
 
 	public static Response empty()
 	{
@@ -21,7 +22,7 @@ public class Response
 		private Response response;
 		private Empty()
 		{
-			super(-1, "", "");
+			super(-1, "", "", -1L);
 		}
 
 	}

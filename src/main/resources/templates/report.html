@@ -3,244 +3,470 @@
 <head>
     <meta charset="UTF-8">
     <title>StressTer Test Report</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* General Page Styling */
         body {
-            font-family: 'Verdana', sans-serif;
+            font-family: 'Inter', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #424242;
+            background-color: #1e1e2f;
+            color: #ffffff;
         }
 
         .header {
             position: fixed;
             top: 0;
             width: 100%;
-            background-color: #000004;
-            color: #81e7f0;
-            padding: 15px;
-            font-size: 20px;
-            font-weight: bold;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            background-color: #10101a;
+            color: #07cadb;
+            padding: 20px;
+            font-size: 22px;
+            font-weight: 600;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.4);
             z-index: 1000;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: fixed;
         }
 
         .header .left {
             position: absolute;
             left: 20px;
-            font-size: 20px;
+            font-weight: bold;
         }
 
         .header .center {
-            margin: 0 auto;
-            font-size: 15px;
-            color: #07cadb;
             text-align: center;
-            width: 100%;
-            max-width: 600px; /* Prevents it from stretching too wide */
         }
 
-        p {
+        .top-section {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 100px;
+            padding: 0 20px;
+            justify-content: center;
+        }
+
+        .testconf, .summary {
+            flex: 1 1 45%;
+            background: #2e2e42;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            min-width: 300px;
+        }
+
+        .testconf table, .summary table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .testconf th, .summary th {
+            background-color: #414165;
+            color: #ffffff;
+            text-align: left;
+            padding: 12px;
+        }
+
+        .testconf td, .summary td {
+            padding: 12px;
+            background-color: #3a3a55;
+            border-bottom: 1px solid #57577c;
             color: #ffffff;
         }
 
-        .container {
-            max-width: 900px;
-            margin: 80px auto 20px auto; /* Adjusted margin to avoid header overlap */
-            background: #424242;
+        .chart-section {
+            max-width: 1300px;
+            margin: 40px auto 0 auto;
             padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+            background-color: #2b2b40;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
 
-        h1, h2 {
-            color: #027878;
+        .container {
+            max-width: 1300px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #2b2b40;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
-        h3 {
-            text-align: center;
+
+        h3, h4, h5 {
             color: #07cadb;
-        }
-
-        h4, h5 {
-            color: #07cadb;
-        }
-
-        .testconf th {
-            background-color: #424242;
-        }
-
-        .summary {
-            background: #fff;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-
-        .summary p {
-            color: #000000;
-        }
-
-        /* Tables */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            background: white;
-        }
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-        th, td {
-            padding: 12px;
-            text-align: left;
-        }
-        th {
-            background: #424242;
-            color: white;
-        }
-        tr:nth-child(even) {
-            background: #f9f9f9;
         }
 
         .collapsible {
-            background: #017580;
-            color: white;
+            background: #07cadb;
+            color: #1e1e2f;
             cursor: pointer;
-            padding: 12px;
+            padding: 14px 20px;
             width: 100%;
             border: none;
             text-align: left;
-            font-size: 16px;
-            border-radius: 5px;
-            transition: background 0.3s ease;
-            margin-top: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 8px;
+            margin-top: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        .collapsible:hover, .active {
-            background: #0056b3;
+
+        .collapsible:hover, .collapsible.active {
+            background: #05b5c4;
         }
+
         .collapsible::after {
-            content: '\25B6'; /* Right arrow */
+            content: '\25B6';
             font-size: 14px;
             transition: transform 0.3s ease;
         }
-        .active::after {
+
+        .collapsible.active::after {
             transform: rotate(90deg);
         }
+
         .content {
             padding: 10px;
             display: none;
-            overflow: hidden;
-            background: #f9f9f9;
-            border-left: 4px solid #007bff;
-            border-radius: 5px;
+            background: #373752;
+            border-radius: 6px;
             margin-bottom: 10px;
-            transition: max-height 0.3s ease-out;
-        }
-        .iteration p {
-            font-size: 12px;
         }
 
+        .scrollable-table {
+            overflow-x: auto;
+            max-height: 300px;
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        table th, table td {
+            padding: 10px;
+            border: 1px solid #444;
+        }
+
+        table th {
+            background-color: #414165;
+        }
+
+        table td {
+            background-color: #3a3a55;
+        }
+
+        .number-box, .number-box-red {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: auto;
+        }
+
+         .separator {
+            border-top: 2px solid #07cadb;
+            margin: 30px 0;
+        }
+
+        .number-box {
+            background-color: #00ff99;
+            color: #000;
+        }
+
+        .number-box-red {
+            background-color: #ff5c5c;
+            color: #000;
+        }
     </style>
 </head>
 <body>
 <div class="header">
-    <span class="left">StressTer</span>
-    <span class="center">Performance Test Report</span>
+    <span class="left">
+        <svg width="24" height="24" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle; margin-right: 10px;">
+            <circle cx="32" cy="32" r="30" stroke="#81e7f0" stroke-width="4"/>
+            <polygon points="30,10 15,35 30,35 25,55 48,28 33,28" fill="#81e7f0"/>
+        </svg>
+        <span style="vertical-align: middle;">StressTer</span>
+    </span>
+    <span class="center" style="font-size:15px">Performance Test Report</span>
 </div>
 
-<div class="container">
+<div class="top-section">
     <div class="testconf">
         <h5>Test Configuration</h5>
         <table>
-            <tr>
-                <th>Configuration</th>
-                <th>Value</th>
+            <tr><th>Configuration</th><th>Value</th></tr>
+            <tr><td>Domain</td><td th:text="${testedDomain}"></td></tr>
+            <tr><td>APIs</td>
+                <td><ul><li th:each="api : ${testedApis}" th:text="${api}"></li></ul></td>
             </tr>
-            <tr>
-                <td>Domain</td>
-                <td th:text="${testedDomain}"></td>
-            </tr>
-            <tr>
-                <td>APIs</td>
-                <td>
-                    <ul>
-                        <li th:each="api : ${testedApis}" th:text="${api}"></li>
-                    </ul>
-                </td>
-            </tr>
-            <tr>
-                <td>Mode</td>
-                <td th:text="${testMode}"></td>
-            </tr>
+            <tr><td>Mode</td><td th:text="${testMode}"></td></tr>
+            <tr><td>Save Success Response</td><td>Disabled</td></tr>
+            <tr><td>Save Failed Response</td><td>Enabled</td></tr>
         </table>
     </div>
 
-    <h4>Summary</h4>
-    <table>
-        <tr>
-            <th>Metric</th>
-            <th>Value</th>
-        </tr>
-        <tr>
-            <td>Total Iterations</td>
-            <td th:text="${totalIterations}"></td>
-        </tr>
-        <tr>
-            <td>Total API Calls</td>
-            <td th:text="${totalApiCalls}"></td>
-        </tr>
-        <tr>
-            <td>Total Execution Time</td>
-            <td th:text="${totalExecutionTime}"></td>
-        </tr>
-    </table>
+    <div class="summary">
+        <h5>Summary</h5>
+        <table>
+            <tr><th>Metric</th><th>Value</th></tr>
+            <tr><td>Total Iterations</td><td th:text="${totalIterations}"></td></tr>
+            <tr><td>Total API Calls</td><td th:text="${totalApiCalls}"></td></tr>
+            <tr><td>Total API Calls Succeeded</td><td th:text="${totalApiCallsSucceeded}"></td></tr>
+            <tr><td>Total API Calls Failed</td><td th:text="${totalApiCallsFailed}"></td></tr>
+            <tr><td>Total Execution Time</td><td th:text="${totalExecutionTime}"></td></tr>
+        </table>
+    </div>
+</div>
 
-    <h4>Iteration Details</h4>
+<div class="chart-section">
+    <h4>Max Execution Time per Iteration</h4>
+    <canvas id="trendChart" height="100"></canvas>
+</div>
+
+<div class="chart-section">
+    <h4>Call Status per Iteration</h4>
+    <canvas id="barChart" height="120"></canvas>
+</div>
+
+
+<div class="container">
+    <h4>Iterations</h4>
     <div th:each="iteration : ${iterations}" class="iteration">
-        <h3>Iteration <span th:text="${iteration.iterationNumber}"></span></h3>
+        <div class="separator"></div>
+        <h3 style="text-align:center">Iteration #<span th:text="${iteration.iterationNumber}"></span></h3>
         <p>API Calls Executed: <span th:text="${iteration.apiCalls}"></span></p>
         <p>Max Execution Time of a Single Call: <span th:text="${iteration.executionTime}"></span></p>
 
         <h5>API Response Details</h5>
         <div th:each="apiResponse : ${iteration.apiResponseDetail}">
             <button class="collapsible">
-                <span th:text="'API: ' + ${apiResponse.apiUri}"></span>
+                <span th:text="${apiResponse.apiUri}"></span>
+                <span class="response-counts">
+                        <span class="number-box" th:text="${apiResponse.succeededResponses}"></span>
+                        <span class="number-box-red" th:text="${apiResponse.failedResponses}"></span>
+                    </span>
             </button>
             <div class="content">
-                <table>
-                    <tr>
-                        <th>Response Code</th>
-                        <th>Response Body</th>
-                    </tr>
-                    <tr th:each="response : ${apiResponse.responses}">
-                        <td th:text="${response.statusCode}"></td>
-                        <td th:text="${response.responseBody}"></td>
-                    </tr>
-                </table>
+                <div class="scrollable-table">
+                    <table>
+                        <tr><th>Response Code</th><th>Response Body</th></tr>
+                        <tr th:each="response : ${apiResponse.responses}">
+                            <td th:text="${response.statusCode}"></td>
+                            <td th:text="${response.responseBody}"></td>
+                        </tr>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 </div>
+</div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        var coll = document.getElementsByClassName("collapsible");
-        for (var i = 0; i < coll.length; i++) {
+        // Toggle collapsible content
+        const coll = document.getElementsByClassName("collapsible");
+        for (let i = 0; i < coll.length; i++) {
             coll[i].addEventListener("click", function () {
                 this.classList.toggle("active");
-                var content = this.nextElementSibling;
-                content.style.display = (content.style.display === "block") ? "none" : "block";
+                const content = this.nextElementSibling;
+                content.style.display = content.style.display === "block" ? "none" : "block";
             });
         }
     });
 </script>
+<script th:inline="javascript">
+    /*
+    /*<![CDATA[*/
+    const rawIterations = [[${iterations}]];
+
+    // For the line chart
+    const labels = rawIterations.map(it => it.iterationNumber);
+    const times = rawIterations.map(it => parseFloat(it.executionTimeinMillis));
+    const apiCalls = rawIterations.map(it => it.apiCalls);
+
+
+
+    new Chart(document.getElementById("trendChart"), {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Max Execution Time (s)',
+                data: times,
+                fill: false,
+                borderColor: '#07cadb',
+                tension: 0.1,
+                pointRadius: 5,
+                pointBackgroundColor: '#00ff99'
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: true },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const index = context.dataIndex;
+                            const time = context.dataset.data[index];
+                            const calls = apiCalls[index];
+                            return [
+                                `Max Execution Time: ${time} s`,
+                                `API Calls: ${calls}`
+                            ];
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    title: { display: true, text: 'Iteration #' },
+                    ticks: { color: '#ffffff' }
+                },
+                y: {
+                    title: { display: true, text: 'Max Execution Time (s)' },
+                    ticks: { color: '#ffffff' }
+                }
+            }
+        }
+    });
+
+    /*]]>*/
+*/
+</script>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const rawIterationsForBar = [[${iterationsForBar}]];
+
+    const labelsForBar = rawIterationsForBar.map(it => it.iterationNumber);
+    const succeededCalls = rawIterationsForBar.map(it => it.apiCallsSucceeded);
+    const failedCalls = rawIterationsForBar.map(it => it.apiCallsFailed);
+
+    new Chart(document.getElementById("barChart"), {
+        type: 'bar',
+        data: {
+            labels: labelsForBar,
+            datasets: [
+                {
+                    label: 'Succeeded Calls',
+                    data: succeededCalls,
+                    backgroundColor: '#00ff99'
+                },
+                {
+                    label: 'Failed Calls',
+                    data: failedCalls,
+                    backgroundColor: '#ff5c5c'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: true }
+            },
+            scales: {
+                x: {
+                    stacked: true,
+                    title: { display: true, text: 'Iteration #', color: '#ffffff' },
+                    ticks: { color: '#ffffff' },
+                    grid: { color: 'rgba(255,255,255,0.1)' }
+                },
+                y: {
+                    stacked: true,
+                    title: { display: true, text: 'API Call Count', color: '#ffffff' },
+                    ticks: { color: '#ffffff' },
+                    grid: { color: 'rgba(255,255,255,0.1)' }
+                }
+            }
+        }
+    });
+    /*]]>*/
+</script>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const rawIterations = [[${iterations}]];
+    const apiTimeSeries = {};
+    const labels = rawIterations.map(it => it.iterationNumber);
+
+    // Build dataset per apiUri
+    rawIterations.forEach((iteration, i) => {
+        iteration.apiResponseDetail.forEach(apiResp => {
+            const uri = apiResp.apiUri;
+            const time = parseFloat(apiResp.executionTime);
+
+            if (!apiTimeSeries[uri]) {
+                apiTimeSeries[uri] = new Array(rawIterations.length).fill(null);
+            }
+            apiTimeSeries[uri][i] = time;
+        });
+    });
+
+    // Build datasets for Chart.js
+    const datasets = Object.entries(apiTimeSeries).map(([uri, data], i) => ({
+        label: uri,
+        data: data,
+        fill: false,
+        borderColor: getColor(i),
+        tension: 0.1,
+        pointRadius: 4,
+        pointBackgroundColor: getColor(i)
+    }));
+
+    function getColor(i) {
+        const palette = ['#07cadb', '#ff5c5c', '#00ff99', '#ffa500', '#f542dd', '#c0ff33', '#339fff'];
+        return palette[i % palette.length];
+    }
+
+    new Chart(document.getElementById("trendChart"), {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: true },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.dataset.label}: ${context.formattedValue} s`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    title: { display: true, text: 'Iteration #', color: '#ffffff' },
+                    ticks: { color: '#ffffff' }
+                },
+                y: {
+                    title: { display: true, text: 'Execution Time (ms)', color: '#ffffff' },
+                    ticks: { color: '#ffffff' }
+                }
+            }
+        }
+    });
+    /*]]>*/
+</script>
+
+
 </body>
 </html>

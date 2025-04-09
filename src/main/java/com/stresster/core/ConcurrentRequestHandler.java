@@ -87,7 +87,11 @@ public class ConcurrentRequestHandler
 		try
 		{
 
-			URL url = new URL(concurrentRequest.getTestDomain() + request.getUri());
+			Long startTime = System.currentTimeMillis();
+
+			String queryParams = Util.HttpClient.paramsToQueryString(new JSONObject(request.getQueryParams()));
+
+			URL url = new URL(concurrentRequest.getTestDomain() + request.getUri() + "?" + queryParams);
 			HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 
 			connection.setRequestMethod(request.getMethod().toUpperCase());
@@ -102,10 +106,9 @@ public class ConcurrentRequestHandler
 			}
 			connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36");
 
-			String queryParams = Util.HttpClient.paramsToQueryString(new JSONObject(request.getQueryParams()));
-			String bodyContent = Optional.ofNullable(request.getRequestBody())
-				.map(body -> queryParams + "&JSONString=" + URLEncoder.encode(body, StandardCharsets.UTF_8))
-				.orElse(queryParams);
+			String bodyContent = (StringUtils.isNotEmpty(request.getFormDataParamName())
+					? request.getFormDataParamName() + "=" : StringUtils.EMPTY)
+				+ URLEncoder.encode(Optional.ofNullable(request.getRequestBody()).orElse(queryParams), StandardCharsets.UTF_8);
 
 			concurrentRequest.getBarrier().await();
 
@@ -137,6 +140,7 @@ public class ConcurrentRequestHandler
 				.statusCode(statusCode)
 				.responseBody((statusCode > 199 && statusCode < 300) ? StringUtils.EMPTY : responseBody)
 				.requestURI(request.getUri())
+				.timeTakeninMillis(System.currentTimeMillis() - startTime)
 				.build();
 
 		}
