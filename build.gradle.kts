@@ -55,7 +55,6 @@ tasks.named("spotbugsMain", SpotBugsTask::class) {
             outputLocation.set(file("${project.rootDir}/reports/spotbugs/reports.html"))
         }
     }
-    includeFilter = file("${project.rootDir}/spotbugs-include.xml")
 }
 
 tasks.named("run") {
