@@ -26,6 +26,8 @@ public class StressTester
 
 	private static final Logger LOGGER = Logger.getLogger(StressTester.class.getName());
 
+	public static ThreadLocal<TestProps> TEST_PROPS_THREAD_LOCAL = new ThreadLocal<>();
+
 	public static void main(String[] args) throws Exception
 	{
 		String propsFilePath = Util.getPropsFilePathFromCommandLine("--test-props=", args);
@@ -51,6 +53,7 @@ public class StressTester
 				.testType(props.getTestType())
 				.testDomain(props.getDomain())
 				.barrier(new CyclicBarrier(noOfAPICalls))
+				.saveResponse(props.isSaveSuccessResponse())
 				.httpRequestList(DataFetcher.get(props.getTestDataFilePath())
 					.entrySet()
 					.stream()
@@ -60,22 +63,19 @@ public class StressTester
 					.collect(Collectors.toList()))
 				.build();
 
-			int noOfThreads = noOfAPICalls * request.getHttpRequestList().size();
-			request.setNoOfThreads(noOfThreads);
 
 			if (request.getHttpRequestList() != null && request.getHttpRequestList().isEmpty())
 			{
 				throw StressterExceptionStore.REQUEST_LIST_EMPTY._new();
 			}
 
-			ExecutorService executorService = Executors.newFixedThreadPool(noOfThreads);
-			TestResults results = ConcurrentRequestHandler.doWork(request, executorService, noOfAPICalls);
-			if (TestResults.INVALID_EXECUTION_TIME.equals(results.getExecutionTime()))
+			TestResults results;
+			results = ConcurrentRequestHandler.doWork(request, noOfAPICalls);
+			if(TestResults.INVALID_EXECUTION_TIME.equals(results.getExecutionTime()))
 			{
 				throw StressterExceptionStore.TEST_EXECUTION_FAILED._new();
 			}
-			executorService.shutdown();
-			Util.softKillExecutor(executorService);
+
 			reportingDataAccumulator.doAccumulateReport(i, results);
 		}
 

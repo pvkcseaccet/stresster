@@ -1,0 +1,78 @@
+<FindBugsFilter>
+  <Match>
+    <Bug pattern="RC_REF_COMPARISON"/> </Match>
+  <Match>
+    <Bug pattern="RC_SYNC_NOT_PROTECT_SHARED_DATA"/> </Match>
+  <Match>
+    <Bug pattern="RC_SYNC_OVER_VALUE_BASED_CLASS"/> </Match>
+  <Match>
+    <Bug pattern="VO_VOLATILE_INCREMENT"/> </Match>
+  <Match>
+    <Bug pattern="VO_VOLATILE_REFERENCE_TO_ARRAY"/> </Match>
+  <Match>
+    <Bug pattern="MS_MUTABLE_COLLECTION"/> </Match>
+  <Match>
+    <Bug pattern="MS_SHOULD_BE_FINAL"/> </Match>
+  <Match>
+    <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/> </Match>
+  <Match>
+    <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD_MAYBE_CLASS"/> </Match>
+  <Match>
+    <Bug pattern="ISC_INSTANTIATE_STATIC_CLASS"/> </Match>
+  <Match>
+    <Bug pattern="DC_DOUBLECHECK"/> </Match>
+
+  <Match>
+    <Bug pattern="DL_SYNCHRONIZATION_ON_SHARED_CONSTANT"/> </Match>
+  <Match>
+    <Bug pattern="DL_SYNCHRONIZATION_ON_UNSHARED_OBJECT"/> </Match>
+  <Match>
+    <Bug pattern="UL_UNRELEASED_LOCK"/> </Match>
+  <Match>
+    <Bug pattern="UW_UNCOND_WAIT"/> </Match>
+  <Match>
+    <Bug pattern="WA_NOT_IN_LOOP"/> </Match>
+  <Match>
+    <Bug pattern="TLW_TWO_LOCK_WAIT"/> </Match>
+
+  <Match>
+    <Bug pattern="CN_IMPLEMENTS_CLONE_BUT_NOT_THROW_CLONE_NOT_SUPPORTED"/> </Match>
+  <Match>
+    <Bug pattern="CN_SYNCHRONIZED_HETHOD_CALLS_NON_SYNCHRONIZED_METHOD"/> </Match>
+  <Match>
+    <Bug pattern="DM_CONCURRENT_ABSTRACTION"/> </Match>
+  <Match>
+    <Bug pattern="JLM_JSR166_LOCKS_IN_SYNCHRONIZED_METHOD"/> </Match>
+  <Match>
+    <Bug pattern="LI_LAZY_INIT_NON_STATIC"/> </Match>
+  <Match>
+    <Bug pattern="LI_LAZY_INIT_STATIC"/> </Match>
+  <Match>
+    <Bug pattern="LOCK_NOT_HELD_ON_FIELD_ACCESS"/> </Match>
+  <Match>
+    <Bug pattern="LOCK_NOT_HELD_ON_METHOD_CALL"/> </Match>
+  <Match>
+    <Bug pattern="NN_NAKED_NOTIFY"/> </Match>
+  <Match>
+    <Bug pattern="NO_NOTIFY_NOTIFYALL"/> </Match>
+  <Match>
+    <Bug pattern="RE_INCONSISTENT_SYNC"/> </Match>
+  <Match>
+    <Bug pattern="SWL_SLEEP_WITH_LOCK_HELD"/> </Match>
+
+  <Match>
+    <Bug pattern="MS_PKGPROTECT"/> </Match>
+  <Match>
+    <Bug pattern="MS_OOI_PKGPROTECT"/> </Match>
+  <Match>
+    <Bug pattern="MS_SHOULD_BE_FINAL"/> </Match> <Match>
+    <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"/> </Match> <Match>
+    <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD_MAYBE_CLASS"/> </Match> <Match>
+    <Bug pattern="SI_INSTANCE_BEFORE_FINALS_ASSIGNED"/> </Match>
+  <Match>
+    <Bug pattern="SI_MAYBE_INSTANCE_BEFORE_FINALS_ASSIGNED"/> </Match>
+  <Match>
+    <Bug pattern="SI_NO_STATIC_INITIALIZER"/> </Match>
+  <Match>
+    <Bug pattern="SU_CONFUSING_INHERITED_STATIC"/> </Match>
+</FindBugsFilter>

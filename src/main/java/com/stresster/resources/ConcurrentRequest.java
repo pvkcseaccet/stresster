@@ -17,9 +17,9 @@ public class ConcurrentRequest
 	private TestType testType;
 	private String reportFilePath;
 	private String testDomain;
-	@Setter private int noOfThreads;
 	private CyclicBarrier barrier;
 	private List<Request> httpRequestList;
+	private boolean saveResponse;
 
 	public int setTestID(int testID)
 	{

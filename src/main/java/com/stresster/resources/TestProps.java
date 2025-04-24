@@ -20,6 +20,8 @@ public class TestProps
 	@SerializedName("test_type") private String testType;
 	private String domain;
 	@SerializedName("urls_to_test") private String urlsToTest;
+	@SerializedName("save_success_response") private boolean saveSuccessResponse;
+	@SerializedName("save_failure_response") private boolean saveFailureResponse;
 
 	public Set<String> getURLsToTest()
 	{

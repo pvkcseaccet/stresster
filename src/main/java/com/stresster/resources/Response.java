@@ -1,15 +1,20 @@
 package com.stresster.resources;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder(builderMethodName = "newBuilder")
+@SuperBuilder(builderMethodName = "newBuilder")
+@AllArgsConstructor
+@NoArgsConstructor
 public class Response
 {
 	private int statusCode;
 	private String responseBody;
 	private String requestURI;
+	private long timeTakeninMillis;
 
 	public static Response empty()
 	{
@@ -21,7 +26,7 @@ public class Response
 		private Response response;
 		private Empty()
 		{
-			super(-1, "", "");
+			super(-1, "", "", -1L);
 		}
 
 	}

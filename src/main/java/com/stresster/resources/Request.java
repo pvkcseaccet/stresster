@@ -19,4 +19,5 @@ public class Request
 	@SerializedName("request_headers") private Map<String, Object> headers;
 	@SerializedName("request_data") private String requestBody;
 	@SerializedName("params") private Map<String, Object> queryParams;
+	@SerializedName("form_data_param_name") private String formDataParamName;
 }
