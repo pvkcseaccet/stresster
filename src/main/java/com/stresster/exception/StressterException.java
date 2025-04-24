@@ -1,6 +1,6 @@
 package com.stresster.exception;
 
-public class StressterException extends RuntimeException
+public class StressterException extends Exception
 {
 	public StressterException(String message)
 	{
