@@ -1,10 +1,14 @@
 package com.stresster.resources;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
-@Builder(builderMethodName = "newBuilder")
+@SuperBuilder(builderMethodName = "newBuilder")
+@AllArgsConstructor
+@NoArgsConstructor
 public class Response
 {
 	private int statusCode;

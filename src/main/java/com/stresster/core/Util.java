@@ -7,6 +7,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 
 public class Util
@@ -61,6 +62,18 @@ public class Util
 				.stream()
 				.map(key -> key + "=" + params.get(key).toString())
 				.collect(Collectors.joining("&"));
+		}
+
+		public static String parseErrorDataFromResponse(JSONObject response)
+		{
+			try
+			{
+				return response.getString("message");
+			}
+			catch(Exception ex)
+			{
+				return StringUtils.EMPTY;
+			}
 		}
 	}
 }

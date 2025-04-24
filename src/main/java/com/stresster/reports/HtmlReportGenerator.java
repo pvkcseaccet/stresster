@@ -4,18 +4,25 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONObject;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
+import com.stresster.core.Util;
 import com.stresster.exception.StressterExceptionStore;
+import com.stresster.resources.Error;
 import com.stresster.resources.Response;
 import com.stresster.resources.reports.ApiResponseDetail;
 import com.stresster.resources.reports.Iteration;
@@ -59,6 +66,7 @@ public class HtmlReportGenerator
 
 		List<Iteration> iterations = new ArrayList<>();
 		Map<String, List<Long>> uriVsIterationMaxTime = new HashMap<>();
+		Map<String, Map<String, Long>> uriVsExceptionCount = new HashMap<>();
 		for(var entry : reportsContext.getReports().entrySet())
 		{
 			List<ApiResponseDetail> apiResponseDetails = new ArrayList<>();
@@ -68,6 +76,22 @@ public class HtmlReportGenerator
 					.stream()
 					.map(Response::getStatusCode)
 					.collect(Collectors.partitioningBy(SUCCEEDED_REQUESTS, Collectors.counting()));
+
+				uriVsExceptionCount.computeIfAbsent(apiEntry.getKey(), x -> new HashMap<>())
+					.putAll(apiEntry.getValue()
+						.stream()
+						.flatMap(x -> x instanceof Error ? Stream.of((Error) x) : Stream.empty())
+						.filter(Objects::nonNull)
+						.collect(Collectors.groupingBy(Error::getErrorData, Collectors.counting())));
+
+				uriVsExceptionCount.computeIfAbsent(apiEntry.getKey(), x -> new HashMap<>())
+					.putAll(apiEntry.getValue()
+						.stream()
+						.filter(x -> !SUCCEEDED_REQUESTS.test(x.getStatusCode()))
+						.map(Response::getResponseBody)
+						.flatMap(x -> StringUtils.startsWith(x, "{") ? Stream.of(Util.HttpClient.parseErrorDataFromResponse(new JSONObject(StringUtils.trim(x)))) : Stream.empty())
+						.filter(Objects::nonNull)
+						.collect(Collectors.groupingBy(Function.identity(), Collectors.counting())));
 
 				apiResponseDetails.add(new ApiResponseDetail(apiEntry.getKey(), apiEntry.getValue()
 					.stream()
@@ -99,6 +123,11 @@ public class HtmlReportGenerator
 		context.setVariable("iterationsForBar", new ArrayList<>(iterations));
 		context.setVariable("iterations", iterations);
 		context.setVariable("uriVsIterations", uriVsIterationMaxTime);
+		Map<String, List<Map.Entry<String, Long>>> flattened = new LinkedHashMap<>();
+		for (Map.Entry<String, Map<String, Long>> outer : uriVsExceptionCount.entrySet()) {
+			flattened.put(outer.getKey(), new ArrayList<>(outer.getValue().entrySet()));
+		}
+		context.setVariable("exceptionStats", flattened);
 
 		String output = templateEngine.process("report", context);
 

@@ -42,14 +42,19 @@
 
         .top-section {
             display: flex;
-            gap: 20px;
             flex-wrap: wrap;
-            margin-top: 100px;
-            padding: 0 20px;
-            justify-content: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding-top: 60px; /* or margin-top */
         }
 
-        .testconf, .summary {
+        .top-section > div {
+            flex: 1 1 30%;
+            min-width: 300px;
+        }
+
+
+        .testconf, .summary, .exception-stats {
             flex: 1 1 45%;
             background: #2e2e42;
             padding: 20px;
@@ -58,20 +63,20 @@
             min-width: 300px;
         }
 
-        .testconf table, .summary table {
+        .testconf table, .summary table, .exception-stats table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 10px;
         }
 
-        .testconf th, .summary th {
+        .testconf th, .summary th, .exception-stats th {
             background-color: #414165;
             color: #ffffff;
             text-align: left;
             padding: 12px;
         }
 
-        .testconf td, .summary td {
+        .testconf td, .summary td, .exception-stats td {
             padding: 12px;
             background-color: #3a3a55;
             border-bottom: 1px solid #57577c;
@@ -230,241 +235,265 @@
             <tr><td>Total Execution Time</td><td th:text="${totalExecutionTime}"></td></tr>
         </table>
     </div>
+
+    <div class="exception-stats">
+        <h5>Exception Stats</h5>
+        <table>
+            <tr>
+                <th>URI</th>
+                <th>Exception</th>
+            </tr>
+            <tr th:each="outer : ${exceptionStats}">
+                <td th:text="${outer.key}"></td>
+                <td>
+                    <ul>
+                        <li th:if="${#lists.isEmpty(outer.value)}">No Exception Occurred</li>
+
+                        <li th:each="entry : ${outer.value}"
+                            th:text="${entry.key + ' occurred ' + entry.value + ' times.'}"></li>
+                    </ul>
+                </td>
+            </tr>
+
+        </table>
+</div>
+
+</div>
+
+
+<div class="chart-section">
+<h4>Max Execution Time per Iteration</h4>
+<canvas id="trendChart" height="100"></canvas>
 </div>
 
 <div class="chart-section">
-    <h4>Max Execution Time per Iteration</h4>
-    <canvas id="trendChart" height="100"></canvas>
-</div>
-
-<div class="chart-section">
-    <h4>Call Status per Iteration</h4>
-    <canvas id="barChart" height="120"></canvas>
+<h4>Call Status per Iteration</h4>
+<canvas id="barChart" height="120"></canvas>
 </div>
 
 
 <div class="container">
-    <h4>Iterations</h4>
-    <div th:each="iteration : ${iterations}" class="iteration">
-        <div class="separator"></div>
-        <h3 style="text-align:center">Iteration #<span th:text="${iteration.iterationNumber}"></span></h3>
-        <p>API Calls Executed: <span th:text="${iteration.apiCalls}"></span></p>
-        <p>Max Execution Time of a Single Call: <span th:text="${iteration.executionTime}"></span></p>
+<h4>Iterations</h4>
+<div th:each="iteration : ${iterations}" class="iteration">
+    <div class="separator"></div>
+    <h3 style="text-align:center">Iteration #<span th:text="${iteration.iterationNumber}"></span></h3>
+    <p>API Calls Executed: <span th:text="${iteration.apiCalls}"></span></p>
+    <p>Max Execution Time of a Single Call: <span th:text="${iteration.executionTime}"></span></p>
 
-        <h5>API Response Details</h5>
-        <div th:each="apiResponse : ${iteration.apiResponseDetail}">
-            <button class="collapsible">
-                <span th:text="${apiResponse.apiUri}"></span>
-                <span class="response-counts">
-                        <span class="number-box" th:text="${apiResponse.succeededResponses}"></span>
-                        <span class="number-box-red" th:text="${apiResponse.failedResponses}"></span>
-                    </span>
-            </button>
-            <div class="content">
-                <div class="scrollable-table">
-                    <table>
-                        <tr><th>Response Code</th><th>Response Body</th></tr>
-                        <tr th:each="response : ${apiResponse.responses}">
-                            <td th:text="${response.statusCode}"></td>
-                            <td th:text="${response.responseBody}"></td>
-                        </tr>
-                    </table>
-                </div>
+    <h5>API Response Details</h5>
+    <div th:each="apiResponse : ${iteration.apiResponseDetail}">
+        <button class="collapsible">
+            <span th:text="${apiResponse.apiUri}"></span>
+            <span class="response-counts">
+                    <span class="number-box" th:text="${apiResponse.succeededResponses}"></span>
+                    <span class="number-box-red" th:text="${apiResponse.failedResponses}"></span>
+                </span>
+        </button>
+        <div class="content">
+            <div class="scrollable-table">
+                <table>
+                    <tr><th>Response Code</th><th>Response Body</th></tr>
+                    <tr th:each="response : ${apiResponse.responses}">
+                        <td th:text="${response.statusCode}"></td>
+                        <td th:text="${response.responseBody}"></td>
+                    </tr>
+                </table>
             </div>
         </div>
     </div>
 </div>
 </div>
+</div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // Toggle collapsible content
-        const coll = document.getElementsByClassName("collapsible");
-        for (let i = 0; i < coll.length; i++) {
-            coll[i].addEventListener("click", function () {
-                this.classList.toggle("active");
-                const content = this.nextElementSibling;
-                content.style.display = content.style.display === "block" ? "none" : "block";
-            });
-        }
-    });
+document.addEventListener("DOMContentLoaded", function () {
+    // Toggle collapsible content
+    const coll = document.getElementsByClassName("collapsible");
+    for (let i = 0; i < coll.length; i++) {
+        coll[i].addEventListener("click", function () {
+            this.classList.toggle("active");
+            const content = this.nextElementSibling;
+            content.style.display = content.style.display === "block" ? "none" : "block";
+        });
+    }
+});
 </script>
 <script th:inline="javascript">
-    /*
-    /*<![CDATA[*/
-    const rawIterations = [[${iterations}]];
+/*
+/*<![CDATA[*/
+const rawIterations = [[${iterations}]];
 
-    // For the line chart
-    const labels = rawIterations.map(it => it.iterationNumber);
-    const times = rawIterations.map(it => parseFloat(it.executionTimeinMillis));
-    const apiCalls = rawIterations.map(it => it.apiCalls);
+// For the line chart
+const labels = rawIterations.map(it => it.iterationNumber);
+const times = rawIterations.map(it => parseFloat(it.executionTimeinMillis));
+const apiCalls = rawIterations.map(it => it.apiCalls);
 
 
 
-    new Chart(document.getElementById("trendChart"), {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Max Execution Time (s)',
-                data: times,
-                fill: false,
-                borderColor: '#07cadb',
-                tension: 0.1,
-                pointRadius: 5,
-                pointBackgroundColor: '#00ff99'
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { display: true },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            const index = context.dataIndex;
-                            const time = context.dataset.data[index];
-                            const calls = apiCalls[index];
-                            return [
-                                `Max Execution Time: ${time} s`,
-                                `API Calls: ${calls}`
-                            ];
-                        }
+new Chart(document.getElementById("trendChart"), {
+    type: 'line',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: 'Max Execution Time (s)',
+            data: times,
+            fill: false,
+            borderColor: '#07cadb',
+            tension: 0.1,
+            pointRadius: 5,
+            pointBackgroundColor: '#00ff99'
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { display: true },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        const index = context.dataIndex;
+                        const time = context.dataset.data[index];
+                        const calls = apiCalls[index];
+                        return [
+                            `Max Execution Time: ${time} s`,
+                            `API Calls: ${calls}`
+                        ];
                     }
                 }
+            }
+        },
+        scales: {
+            x: {
+                title: { display: true, text: 'Iteration #' },
+                ticks: { color: '#ffffff' }
             },
-            scales: {
-                x: {
-                    title: { display: true, text: 'Iteration #' },
-                    ticks: { color: '#ffffff' }
-                },
-                y: {
-                    title: { display: true, text: 'Max Execution Time (s)' },
-                    ticks: { color: '#ffffff' }
-                }
+            y: {
+                title: { display: true, text: 'Max Execution Time (s)' },
+                ticks: { color: '#ffffff' }
             }
         }
-    });
+    }
+});
 
-    /*]]>*/
+/*]]>*/
 */
 </script>
 
 <script th:inline="javascript">
-    /*<![CDATA[*/
-    const rawIterationsForBar = [[${iterationsForBar}]];
+/*<![CDATA[*/
+const rawIterationsForBar = [[${iterationsForBar}]];
 
-    const labelsForBar = rawIterationsForBar.map(it => it.iterationNumber);
-    const succeededCalls = rawIterationsForBar.map(it => it.apiCallsSucceeded);
-    const failedCalls = rawIterationsForBar.map(it => it.apiCallsFailed);
+const labelsForBar = rawIterationsForBar.map(it => it.iterationNumber);
+const succeededCalls = rawIterationsForBar.map(it => it.apiCallsSucceeded);
+const failedCalls = rawIterationsForBar.map(it => it.apiCallsFailed);
 
-    new Chart(document.getElementById("barChart"), {
-        type: 'bar',
-        data: {
-            labels: labelsForBar,
-            datasets: [
-                {
-                    label: 'Succeeded Calls',
-                    data: succeededCalls,
-                    backgroundColor: '#00ff99'
-                },
-                {
-                    label: 'Failed Calls',
-                    data: failedCalls,
-                    backgroundColor: '#ff5c5c'
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { display: true }
+new Chart(document.getElementById("barChart"), {
+    type: 'bar',
+    data: {
+        labels: labelsForBar,
+        datasets: [
+            {
+                label: 'Succeeded Calls',
+                data: succeededCalls,
+                backgroundColor: '#00ff99'
             },
-            scales: {
-                x: {
-                    stacked: true,
-                    title: { display: true, text: 'Iteration #', color: '#ffffff' },
-                    ticks: { color: '#ffffff' },
-                    grid: { color: 'rgba(255,255,255,0.1)' }
-                },
-                y: {
-                    stacked: true,
-                    title: { display: true, text: 'API Call Count', color: '#ffffff' },
-                    ticks: { color: '#ffffff' },
-                    grid: { color: 'rgba(255,255,255,0.1)' }
-                }
+            {
+                label: 'Failed Calls',
+                data: failedCalls,
+                backgroundColor: '#ff5c5c'
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { display: true }
+        },
+        scales: {
+            x: {
+                stacked: true,
+                title: { display: true, text: 'Iteration #', color: '#ffffff' },
+                ticks: { color: '#ffffff' },
+                grid: { color: 'rgba(255,255,255,0.1)' }
+            },
+            y: {
+                stacked: true,
+                title: { display: true, text: 'API Call Count', color: '#ffffff' },
+                ticks: { color: '#ffffff' },
+                grid: { color: 'rgba(255,255,255,0.1)' }
             }
         }
-    });
-    /*]]>*/
+    }
+});
+/*]]>*/
 </script>
 
 <script th:inline="javascript">
-    /*<![CDATA[*/
-    const rawIterations = [[${iterations}]];
-    const apiTimeSeries = {};
-    const labels = rawIterations.map(it => it.iterationNumber);
+/*<![CDATA[*/
+const rawIterations = [[${iterations}]];
+const apiTimeSeries = {};
+const labels = rawIterations.map(it => it.iterationNumber);
 
-    // Build dataset per apiUri
-    rawIterations.forEach((iteration, i) => {
-        iteration.apiResponseDetail.forEach(apiResp => {
-            const uri = apiResp.apiUri;
-            const time = parseFloat(apiResp.executionTime);
+// Build dataset per apiUri
+rawIterations.forEach((iteration, i) => {
+    iteration.apiResponseDetail.forEach(apiResp => {
+        const uri = apiResp.apiUri;
+        const time = parseFloat(apiResp.executionTime);
 
-            if (!apiTimeSeries[uri]) {
-                apiTimeSeries[uri] = new Array(rawIterations.length).fill(null);
-            }
-            apiTimeSeries[uri][i] = time;
-        });
+        if (!apiTimeSeries[uri]) {
+            apiTimeSeries[uri] = new Array(rawIterations.length).fill(null);
+        }
+        apiTimeSeries[uri][i] = time;
     });
+});
 
-    // Build datasets for Chart.js
-    const datasets = Object.entries(apiTimeSeries).map(([uri, data], i) => ({
-        label: uri,
-        data: data,
-        fill: false,
-        borderColor: getColor(i),
-        tension: 0.1,
-        pointRadius: 4,
-        pointBackgroundColor: getColor(i)
-    }));
+// Build datasets for Chart.js
+const datasets = Object.entries(apiTimeSeries).map(([uri, data], i) => ({
+    label: uri,
+    data: data,
+    fill: false,
+    borderColor: getColor(i),
+    tension: 0.1,
+    pointRadius: 4,
+    pointBackgroundColor: getColor(i)
+}));
 
-    function getColor(i) {
-        const palette = ['#07cadb', '#ff5c5c', '#00ff99', '#ffa500', '#f542dd', '#c0ff33', '#339fff'];
-        return palette[i % palette.length];
-    }
+function getColor(i) {
+    const palette = ['#07cadb', '#ff5c5c', '#00ff99', '#ffa500', '#f542dd', '#c0ff33', '#339fff'];
+    return palette[i % palette.length];
+}
 
-    new Chart(document.getElementById("trendChart"), {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: datasets
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: { display: true },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return `${context.dataset.label}: ${context.formattedValue} s`;
-                        }
+new Chart(document.getElementById("trendChart"), {
+    type: 'line',
+    data: {
+        labels: labels,
+        datasets: datasets
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { display: true },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        return `${context.dataset.label}: ${context.formattedValue} s`;
                     }
                 }
+            }
+        },
+        scales: {
+            x: {
+                title: { display: true, text: 'Iteration #', color: '#ffffff' },
+                ticks: { color: '#ffffff' }
             },
-            scales: {
-                x: {
-                    title: { display: true, text: 'Iteration #', color: '#ffffff' },
-                    ticks: { color: '#ffffff' }
-                },
-                y: {
-                    title: { display: true, text: 'Execution Time (ms)', color: '#ffffff' },
-                    ticks: { color: '#ffffff' }
-                }
+            y: {
+                title: { display: true, text: 'Execution Time (ms)', color: '#ffffff' },
+                ticks: { color: '#ffffff' }
             }
         }
-    });
-    /*]]>*/
+    }
+});
+/*]]>*/
 </script>
 
 
