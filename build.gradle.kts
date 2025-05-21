@@ -57,7 +57,39 @@ tasks.named("spotbugsMain", SpotBugsTask::class) {
     }
 }
 
+sourceSets {
+    create("barrierModule") {
+        java {
+            srcDirs("src/main/java/com/stresster/barrier", "src/main/java/com/stresster/exception")
+        }
+    }
+}
+
+dependencies {
+    "barrierModuleCompileOnly"("org.projectlombok:lombok:1.18.36")
+    "barrierModuleAnnotationProcessor"("org.projectlombok:lombok:1.18.36")
+}
+
+tasks.register<Jar>("publishBarrierManager") {
+    dependsOn(sourceSets["barrierModule"].classesTaskName)
+
+    archiveFileName.set("StressterBarrierManager.jar")
+
+    destinationDirectory.set(layout.buildDirectory.dir("libs"))
+
+    from(sourceSets["barrierModule"].output)
+
+    manifest {
+        attributes(
+            "Implementation-Title" to "Stresster Barrier Manager",
+            "Implementation-Version" to project.version
+        )
+    }
+}
+
+
 tasks.named("run") {
+    dependsOn("publishBarrierManager")
     doFirst {
         if (!project.hasProperty("testProps")) {
             (this as JavaExec).args("--test-props=")

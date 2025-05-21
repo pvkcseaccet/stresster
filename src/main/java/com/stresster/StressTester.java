@@ -26,7 +26,7 @@ public class StressTester
 
 	private static final Logger LOGGER = Logger.getLogger(StressTester.class.getName());
 
-	public static ThreadLocal<TestProps> TEST_PROPS_THREAD_LOCAL = new ThreadLocal<>();
+	public static final ThreadLocal<TestProps> TEST_PROPS_THREAD_LOCAL = new ThreadLocal<>();
 
 	public static void main(String[] args) throws Exception
 	{

@@ -13,6 +13,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.stresster.exception.StressterException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
@@ -34,7 +35,7 @@ public class HtmlReportGenerator
 	public static final Predicate<Integer> SUCCEEDED_REQUESTS = x -> x > 199 && x < 299;
 
 
-	public void generateReport(ReportsContext reportsContext)
+	public void generateReport(ReportsContext reportsContext) throws StressterException
 	{
 		TemplateEngine templateEngine = new TemplateEngine();
 		ClassLoaderTemplateResolver resolver = new ClassLoaderTemplateResolver();

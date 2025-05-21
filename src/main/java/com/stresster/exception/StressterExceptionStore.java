@@ -8,7 +8,10 @@ public enum StressterExceptionStore
 	REQUEST_LIST_EMPTY(new StressterException("No URL matches URLs given in test-props file."), true),
 	INVALID_ARGUMENT_RECEIVED_FROM_CLIENT(new StressterException("Invalid Test Arguments Passed."), true),
 	TEST_EXECUTION_FAILED(new StressterException("Test Execution Failed."), true),
-	REPORT_GENERATION_FAILED(new StressterException("Report Generation Failed."), true);
+	REPORT_GENERATION_FAILED(new StressterException("Report Generation Failed."), true),
+	CONFIGURE_BARRIER_BEFORE_INSTALLING(new StressterException("Please configure barrier using Barrier.configure() before installing."), true),
+	ENSURE_TWO_OR_MORE_REQUESTS(new StressterException("Please ensure to provide two or more requests instead of just one."), true),
+	BROKEN_BARRIER_PROVIDED(new StressterException("Please reset or provide barrier with proper parties."), true);
 
 	StressterExceptionStore(StressterException ex, boolean needLog)
 	{
