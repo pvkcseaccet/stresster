@@ -1,5 +1,6 @@
 package com.stresster.reports;
 
+import com.stresster.exception.StressterException;
 import lombok.Getter;
 
 import java.io.File;
@@ -78,7 +79,7 @@ public class ReportingDataAccumulator
 			.reduce((x, y) -> x + "\n=============================================================================\n" + y).get();
 	}
 
-	public void publishReport(ReportsContext context)
+	public void publishReport(ReportsContext context) throws StressterException
 	{
 		HtmlReportGenerator reportGenerator = new HtmlReportGenerator();
 		reportGenerator.generateReport(context);
