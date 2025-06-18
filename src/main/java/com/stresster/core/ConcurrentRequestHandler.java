@@ -31,16 +31,25 @@ public class ConcurrentRequestHandler
 {
 
 	private static final Logger LOGGER = Logger.getLogger(ConcurrentRequestHandler.class.getName());
-	private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
-		.followRedirects(HttpClient.Redirect.NORMAL)
-		.build();
-	private static final ExecutorService SERVICE = Executors.newCachedThreadPool();
+	private static final HttpClient HTTP_CLIENT;
+	private static final ExecutorService SERVICE;
+
+	static
+	{
+		HTTP_CLIENT = HttpClient.newBuilder()
+				.followRedirects(HttpClient.Redirect.NORMAL)
+				.build();
+
+		SERVICE = Executors.newCachedThreadPool(); //assuming we have to spawn finite unknown no. of threads per iteration...
+		Runtime.getRuntime().addShutdownHook(new Thread(SERVICE::shutdown));
+	}
 
 	public static TestResults doWork(ConcurrentRequest concurrentRequest, int iterations)
 	{
 		long timeInMillis = System.currentTimeMillis();
 		try
 		{
+
 			List<Response> responseList = doWork0(concurrentRequest, iterations);
 			return TestResults.newBuilder()
 				.executionTime((System.currentTimeMillis() - timeInMillis) / 1000)
