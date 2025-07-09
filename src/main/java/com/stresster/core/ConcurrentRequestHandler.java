@@ -12,13 +12,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.function.BiFunction;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -37,15 +31,25 @@ public class ConcurrentRequestHandler
 {
 
 	private static final Logger LOGGER = Logger.getLogger(ConcurrentRequestHandler.class.getName());
-	private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
-		.followRedirects(HttpClient.Redirect.NORMAL)
-		.build();
+	private static final HttpClient HTTP_CLIENT;
+	private static final ExecutorService SERVICE;
+
+	static
+	{
+		HTTP_CLIENT = HttpClient.newBuilder()
+				.followRedirects(HttpClient.Redirect.NORMAL)
+				.build();
+
+		SERVICE = Executors.newCachedThreadPool(); //assuming we have to spawn finite unknown no. of threads per iteration...
+		Runtime.getRuntime().addShutdownHook(new Thread(SERVICE::shutdown));
+	}
 
 	public static TestResults doWork(ConcurrentRequest concurrentRequest, int iterations)
 	{
 		long timeInMillis = System.currentTimeMillis();
 		try
 		{
+
 			List<Response> responseList = doWork0(concurrentRequest, iterations);
 			return TestResults.newBuilder()
 				.executionTime((System.currentTimeMillis() - timeInMillis) / 1000)
@@ -70,40 +74,27 @@ public class ConcurrentRequestHandler
 			return null;
 		}
 
-		ExecutorService service = Executors.newCachedThreadPool();
-		try
-		{
-			List<Future<Response>> calls = Collections.nCopies(iterations, requestList)
-				.parallelStream()
-				.flatMap(Collection::stream)
-				.map((request) -> getTask.apply(concurrentRequest, request))
-				.map(service::submit)
-				.collect(Collectors.toList());
+		List<CompletableFuture<Response>> calls = Collections.nCopies(iterations, requestList)
+			.parallelStream()
+			.flatMap(Collection::stream)
+			.map((request) -> (CompletableFuture<Response>) getTask.apply(concurrentRequest, request))
+			.collect(Collectors.toList());
 
-			return calls.stream()
-				.map(responseFutureTask -> {
-					try
-					{
-						return responseFutureTask.get();
-					}
-					catch(InterruptedException | ExecutionException e)
-					{
-						throw new RuntimeException(e);
-					}
-				})
-				.collect(Collectors.toList());
-		}
-		finally
-		{
-			service.shutdown();
-			if (!service.awaitTermination(60, TimeUnit.SECONDS))
-			{
-				service.shutdownNow();
-			}
-		}
+		return calls.stream()
+			.map(responseFutureTask -> {
+				try
+				{
+					return responseFutureTask.join();
+				}
+				catch(Exception e)
+				{
+					throw new RuntimeException(e);
+				}
+			})
+			.collect(Collectors.toList());
 	}
 
-	private static BiFunction<ConcurrentRequest, Request, Callable<Response>> getTask = (concurrentRequest, request) -> (() -> {
+	private static BiFunction<ConcurrentRequest, Request, CompletableFuture<Response>> getTask = (concurrentRequest, request) -> CompletableFuture.supplyAsync(() -> {
 		Long startTime = System.currentTimeMillis();
 		try
 		{
@@ -151,7 +142,7 @@ public class ConcurrentRequestHandler
 				.timeTakeninMillis(System.currentTimeMillis() - startTime)
 				.build();
 		}
-	});
+	}, SERVICE);
 
 	private static HttpRequest.BodyPublisher getBodyPublisher(Request request, String queryParams)
 	{

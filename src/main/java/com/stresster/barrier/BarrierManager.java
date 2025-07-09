@@ -10,7 +10,7 @@ public class BarrierManager
     public static Barrier create(String uri, int noOfRequests) throws StressterException
     {
         BarrierConf barrierConf = BarrierConf.builder()
-                .uri(uri)
+                .uniqueGroupID(uri)
                 .noOfRequests(noOfRequests)
                 .build();
 
